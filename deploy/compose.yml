@@ -1,0 +1,26 @@
+services:
+  institucional:
+    image: tio-institucional-v2:${SITE_VERSION:?Defina a versao}
+    container_name: tio-institucional-v2
+    restart: unless-stopped
+    env_file: runtime.env
+    environment:
+      PORT: '8080'
+    ports:
+      - '127.0.0.1:3180:8080'
+    networks: [tio,banco]
+    read_only: true
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    mem_limit: 384m
+    cpus: 0.5
+    logging:
+      driver: json-file
+      options: {max-size: '10m', max-file: '2'}
+networks:
+  tio:
+    external: true
+    name: tio-ai-llm_default
+  banco:
+    external: true
+    name: supabase_default
