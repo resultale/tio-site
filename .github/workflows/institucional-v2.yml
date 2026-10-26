@@ -1,0 +1,19 @@
+name: Verificar institucional v2
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm run check
+      - run: node --check backend/storage.mjs && node --check public/equipe.js
+      - run: npm test
+      - run: bash -n deploy/preparar.sh
+      - run: docker build -f Dockerfile.v2 -t tio-institucional:teste .

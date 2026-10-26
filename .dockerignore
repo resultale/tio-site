@@ -1,0 +1,8 @@
+.git
+.env*
+node_modules
+data
+tests
+docs
+db
+*.tar.gz
