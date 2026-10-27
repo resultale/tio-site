@@ -3,12 +3,14 @@ import {readFile} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createSiteApi,rpcClient,googleClient} from './backend/site.mjs';
+import {createProfileApi} from './backend/profile.mjs';
 import {supabaseStorage} from './backend/storage.mjs';
 const publicRoot=fileURLToPath(new URL('./public/',import.meta.url));
 const paths=new Map([['/','index.html'],['/cadastro-motorista/','cadastro-motorista/index.html'],['/cadastro-negocio/','cadastro-negocio/index.html'],['/privacidade/','privacidade/index.html'],['/styles.css','styles.css'],['/app.js','app.js'],['/logo-transparente.png','logo-transparente.png'],['/logo-oficial.png','logo-oficial.png'],['/logo.png','logo.png'],['/hero-bg.jpg','hero-bg.jpg'],['/equipe','equipe.html'],['/equipe.js','equipe.js']]);
 const types={html:'text/html; charset=utf-8',css:'text/css; charset=utf-8',js:'text/javascript; charset=utf-8',png:'image/png',jpg:'image/jpeg'};
-export function createServer(options){const api=createSiteApi(options);return http.createServer(async(req,res)=>{
+export function createServer(options){const api=createSiteApi(options),profile=createProfileApi(options);return http.createServer(async(req,res)=>{
  try{res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','strict-origin-when-cross-origin');res.setHeader('X-Frame-Options','DENY');res.setHeader('Cache-Control','no-store');const url=new URL(req.url,'http://site');
+ if(await profile(req,res,url))return;
  if(await api(req,res,url))return;
  if(!['GET','HEAD'].includes(req.method)){res.writeHead(405);res.end();return;}
  if(url.pathname==='/healthz'){res.writeHead(200,{'Content-Type':'application/json'});res.end(req.method==='HEAD'?undefined:'{"status":"ok","service":"tio-institucional-v2"}');return;}

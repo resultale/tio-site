@@ -1,6 +1,6 @@
 import {mkdir,writeFile,readFile,rm} from 'node:fs/promises';
 import path from 'node:path';
-const valid=name=>/^cadastros-site\/[a-f0-9-]{36}\/[a-z_]+\.(png|jpg|pdf)$/.test(name);
+const valid=name=>/^perfis\/[a-f0-9-]{36}\/[a-f0-9-]{36}\.jpg$/.test(name)||/^cadastros-site\/[a-f0-9-]{36}\/[a-z_]+\.(png|jpg|pdf)$/.test(name);
 export function supabaseStorage({url,key,fetcher=fetch}){
  const headers={apikey:key,Authorization:`Bearer ${key}`};
  const object=name=>{if(!valid(name))throw Error('Caminho de documento inválido.');return url+'/storage/v1/object/documentos/'+name;};
